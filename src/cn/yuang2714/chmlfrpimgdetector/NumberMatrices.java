@@ -115,14 +115,14 @@ public class NumberMatrices implements Iterable<NumberMatrix> {
             {I,W,W,W,I,I},
             }, ZERO = {
             {I,I,W,W,I,I},
-            {I,W,I,I,W,W},
+            {I,W,I,I,W,I},
             {W,I,I,I,I,W},
             {W,I,I,I,I,W},
             {W,I,I,I,I,W},
             {W,I,I,I,I,W},
             {W,I,I,I,I,W},
             {W,I,I,I,I,W},
-            {I,W,I,I,W,W},
+            {I,W,I,I,W,I},
             {I,I,W,W,I,I},
             }
     ;
