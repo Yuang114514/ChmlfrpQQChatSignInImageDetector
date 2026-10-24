@@ -11,6 +11,7 @@ public class CodeGenerator {
     void main() throws Exception {
         genArrays();
         genMatrices();
+        genNumberTrues();
     }
     
     private static void genArrays() {
@@ -80,6 +81,19 @@ public class CodeGenerator {
         }
         builder.append("\n;");
         
+        IO.println(builder);
+    }
+    
+    private static void genNumberTrues() {
+        StringBuilder builder = new StringBuilder();
+        for (NumberMatrix i : NumberMatrices.ITERATOR) {
+            builder.append(i.number()).append("：");
+            int count = 0;
+            for (boolean[] j : i.matrix()) {
+                for (boolean k : j) if (k) count++;
+            }
+            builder.append(count).append("\n");
+        }
         IO.println(builder);
     }
 }

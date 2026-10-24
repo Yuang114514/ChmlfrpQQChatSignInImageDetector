@@ -8,12 +8,18 @@ import java.util.*;
 import java.util.List;
 
 public class Detector {
-    static void main() throws Exception {
-        BufferedImage img = ImageIO.read(new File(IO.readln("请输入要识别的图片路径：")));
+    static void main(String[] args) throws Exception {
+        String path;
+        int numberCount = 4;
+        if (args.length >= 1) path = args[0];
+        else path = IO.readln("请输入要识别的图片路径：");
+        if (args.length >= 2) numberCount = Integer.parseInt(args[1]);
+        
+        BufferedImage img = ImageIO.read(new File(path));
         
         long start = System.nanoTime();
         
-        Pair<Color, List<Color>> analyze = analyzeColor(img);
+        Pair<Color, List<Color>> analyze = analyzeColor(img, numberCount);
         Color background = analyze.left();
         List<Color> noises = analyze.right();
         
@@ -47,11 +53,11 @@ public class Detector {
         detected.forEach(p -> resultBuilder.append(p.right()));
         
         long end = System.nanoTime();
-        IO.println("结果：" + resultBuilder + " 用时：" + Util.cutNumber(((float) end - start) / 1_000_000) + "ms");
+        IO.println("结果：" + resultBuilder + " 用时：" + Util.calculateTime(end - start) + "ms");
     }
     
     //Pair<背景色, List<杂色>>
-    private static Pair<Color, List<Color>> analyzeColor(BufferedImage img) {
+    private static Pair<Color, List<Color>> analyzeColor(BufferedImage img, int numberCuont) {
         IO.println("开始分析颜色...");
         //Map<颜色, 数量>
         Map<Color, Integer> colors = new HashMap<>();
@@ -67,7 +73,10 @@ public class Detector {
         int maxCount = 0;
         List<Color> noise = new ArrayList<>();
         for (Map.Entry<Color, Integer> entry : colors.entrySet()) {
-            if (entry.getValue() == 1) noise.add(entry.getKey());
+            //出现次数太多或太少就排除掉（十个数字里7最少只有15个像素，5和6并列第一有23个像素
+            //见CodeGenerator.genNumberTrues()
+            //预期找到4个数字
+            if (entry.getValue() < 15 * numberCuont || entry.getValue() > 23 * numberCuont) noise.add(entry.getKey());
             if (entry.getValue() > maxCount) {
                 maxCount = entry.getValue();
                 mostFrequentColor = entry.getKey();
