@@ -1,10 +1,16 @@
 package cn.yuang2714.chmlfrpimgdetector;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
 
 public class CodeGenerator {
-    void main() {
+    void main() throws Exception {
         genArrays();
+        genMatrices();
     }
     
     private static void genArrays() {
@@ -40,5 +46,40 @@ public class CodeGenerator {
         }
         
         return answer;
+    }
+    
+    private static final Map<Integer, String> names = Map.of(
+            1,"ONE",
+            2, "TWO",
+            3, "THREE",
+            4, "FOUR",
+            5, "FIVE",
+            6, "SIX",
+            7, "SEVEN",
+            8, "EIGHT",
+            9, "NINE",
+            0, "ZERO"
+    );
+    
+    private static void genMatrices() throws IOException {
+        BufferedImage font = ImageIO.read(Objects.requireNonNull(CodeGenerator.class.getResource("/numbers.png")));
+        
+        StringBuilder builder = new StringBuilder("public static final boolean[][]\n    ");
+        for (int number = 0; number < 10; number++) {
+            builder.append(names.get(number == 9 ? 0 : number + 1)).append(" = {\n");
+            for (int y = 0; y < 10; y++) {
+                builder.append("    {");
+                for (int x = 0; x < 6; x++) {
+                    if (font.getRGB(number * 7 + x, y) == 0xFF_FF_FF_FF) builder.append("W");
+                    else builder.append("I");
+                    builder.append(",");
+                }
+                builder.append("},\n");
+            }
+            builder.append("    }, ");
+        }
+        builder.append("\n;");
+        
+        IO.println(builder);
     }
 }
